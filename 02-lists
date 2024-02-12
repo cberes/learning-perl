@@ -1,0 +1,106 @@
+#!/usr/bin/env perl
+
+use warnings;
+use 5.010;
+
+$colors[0] = 'red'; # can add new elements like this
+$colors[1] = 'green';
+$colors[2]; # returns undef
+
+$colors[$#colors] = 'GREEN'; # returns index of the last element (not necessarily the size - 1)
+
+# Can use negative indices too.
+$colors[-1] = 'green'; # -1 is the last Element, -2 is 2nd last, etc.
+
+(1, 2, 3); # makes a list
+(1..3); # range operator
+
+say qw( mabel wumbly buns ); # makes list ('mabel', 'wumbly', 'buns')
+
+# Can use other delimiters, e.g
+# qw! ... !
+# qw[ ... ]
+# etc. Can use \ to escape the delimeter
+
+# can also use whatever whitespace you want
+say qw/
+  sunday
+  monday
+  tuesday
+  wednesday thursday friday saturday
+/;
+
+# can do this
+($first, $second, $third) = ('gold', 'silver', 'bronze');
+
+# extra values on the right are ignored
+# if there are too few values on the right, extra values on left are assigned undef
+
+# the book says the variable is an array while the list is a collection
+@tags = qw<html head body>;
+
+# array names expands to the list it contains
+@stuff = (@tags, $first, $second); # this is a  5-element list
+say @stuff;
+
+# pop removes and returns the last element in a list
+say pop @stuff;
+say @stuff;
+
+# push adds an element to the end of the list
+push @stuff, 'new element';
+say @stuff;
+
+# shift and unshift are like pop and push for the start of the list
+unshift @stuff, @colors; # you can push/unshift arrays, which add all elements
+say @stuff;
+
+# splice can add/remove elements from the middle of a list
+splice @stuff, 2, 3; # 2nd arg is the index to remove at, 3rd arg is the length
+splice @stuff, 2, 0, qw( hydrogen helium ); # 4th arg is list to insert
+say @stuff;
+
+say "@stuff"; # spaces in between the elements!
+
+foreach $thing (@stuff) {
+    $thing .= '!'; # you can modify list elements this way
+    say $thing;
+}
+
+foreach (1..10) {
+    # $_ is the default variable name if you don't set one
+    print $_;
+    print; # this is the same as above; most functions will use $_ as the default
+}
+say;
+
+say reverse @stuff; # returns a new list; doesn't modify @stuff
+say sort @stuff; # treats everything as a string, so this works poorly with numbers
+
+# each returns the index and the current element
+# This requires perl 5.12, but using it seems to cause problems I don't know how to fix yet.
+#
+# while (my($index, $value) = each @stuff) {
+#     say "stuff[$index] = $value";
+# }
+
+# something about context here
+# context is always scalar or list
+@copy = @stuff;     # copies array to a new array
+$count = @stuff;    # gets size of list
+
+@reverseCopy = reverse @stuff;      # copies list with elemenets in reverse order
+$reverseString = reverse @stuff;    # concatenates elements into a string and reverses it
+
+# if use use a scalar expression in list context you usually get a single-element list
+@result = 6 + 9;    # (15)
+@foo = 'bar';       # ('bar')
+
+say @foo;
+say scalar @foo; # can force scalar context (this prints the list size)
+
+# <STDIN> can be used in scalar or list context
+# $line = <STDIN>;  # gets 1 line
+# @lines = <STDIN>; # gets all lines until input ends
+# chomp(@lines2 = <STDIN>); # same for chomp, which chomps each line
+ 
