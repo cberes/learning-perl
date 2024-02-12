@@ -1,0 +1,103 @@
+#!/usr/bin/env perl
+
+use warnings; # this is probably a good idea
+
+# all numbers are doubles to perl
+
+# can use underscores line commas within numbers
+10_000;
+
+# can use other bases
+0377;       # 255 in octal
+0xff;       # 255 in hexadecimal
+0b11111111; # 255 in binary
+
+# numerical operators: + - * / % (modulus) ** (exponent)
+
+use utf8; # use unicode
+
+use 5.010; # enable features up to this version, like say
+
+say 'hello\n';
+say 'Don\'t \\go\ there\n';
+say 'multi-
+line
+strings';
+
+say "double-quotes\nallow\n\tmore escape sequences.";
+say "there are \Usome weird\E upercase and \lLowercase escapes.";
+
+say 'concat' . 'enation';
+say 'repeat' x 3;
+
+say '12' * '3'; # perl converts between numbers and strings automatically
+
+$scalarVariable = 'variable names are case sensitive';
+say $scalarVariable;
+
+# apparently these are called binarry assignment operators
+$president = 'George';
+$president .= ' Washington';
+say $president;
+
+$five = 5;
+$five **= 2;
+say $five;
+
+say "string interpolation: 5^2 = $five";
+say "you can do this too: ${five}";
+
+# there ar different comparison operators for strings and numbers
+# comparison    number  string
+# equal         ==      eq
+# not equal     !=      ne
+# less than     <       lt
+# greater than  >       gt
+# < or equal    <=      le
+# > or equal    >=      ge
+
+if ($president ne '') {
+    say 'perl has if-else';
+} else {
+    say 'uh oh';
+}
+
+# perl has no boolean type
+# 0, '0', and '' are all false, everything else is true
+
+say '! negates ' . (!$five) . ' and you can use !! to convert to boolean ' . (!!$five);
+
+# get user input
+$input = <STDIN>;
+if ($input eq "\n") {
+    say 'excellent choice';
+} else {
+    say $input;
+}
+
+# you can inline the variable declaration
+chomp($text = <STDIN>);
+say $text;
+
+say('function parentheses are optional');
+
+$i = 0;
+while ($i < 10) {
+    $i += 2;
+    print $i;
+}
+say;
+
+# unassigned variables have the value undef
+# when used as a number, its value is 0
+# when used as a string, its value is the empty string
+# many operators return undef when you did something stupid
+
+say 'type ctrl D next';
+
+$xyz = <STDIN>;
+if (defined $xyz) {
+    say 'I guess you already know about defined';
+} else {
+    say 'use defined to check for undef'
+}
