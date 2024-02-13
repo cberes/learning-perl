@@ -1,0 +1,88 @@
+#!/usr/bin/env perl
+
+use 5.012;
+
+# this does nothing
+while (1..10) {
+    print;
+}
+
+# this reads and prints lines until input stops
+say "type some lines then do ctrl D";
+while (<STDIN>) {
+    print;
+}
+
+# this is similar but it prints the lines only after input stops
+say "type some lines then do ctrl D";
+foreach (<STDIN>) {
+    print;
+}
+
+say "invocation arguments: @ARGV";
+
+# the diamond operator will read either from files given as invocation arguments or stdin
+# if multiple files are listed it will concatenate them
+# can use stdin with files, e.g. `./04-io README.md - LICENSE`
+say "next loop depends on if you gave any arguments";
+while (<>) {
+    print;
+}
+
+# interestingly, @ARGV is empty after using <>
+my $arg_count = @ARGV;
+say "invocation arg count: $arg_count"; 
+
+printf "fruit 1: %s, fruit 2: %s\n", qw( apple banana );
+
+sub count_bullet_points {
+    # open a file for reading
+    # can use > for write, or >> for append
+    # can combine last 2 arguments, but seperate args is safer
+    # 
+    # $readme is the file handle
+    # open returns true if the file can be opened
+    my $success = open my $readme, '<', $_[0];
+    if (!$success) {
+        # perl appends program name and line number (as with die)
+        warn "failed to open $_[0] for reading: $!";
+        return;
+    }
+
+    my $count = 0;
+    while (<$readme>) {
+        if (substr($_, 0, 1) eq '-') {
+            $count += 1;
+        }
+    }
+
+    # file is closed automatically if a new file is opened with the same handle
+    # or the program exits
+    close $readme;
+
+    $count;
+}
+
+print "README.md has ".&count_bullet_points('README.md')." bullet points\n";
+&count_bullet_points('README.md1'); # this file doesn't exist
+
+print STDERR "pass filehandle as first arg to use a non-default filehandle\n";
+printf STDERR "no %s after the filehandle\n", ',';
+
+my $default_fh = select STDERR;
+print "STDERR is now the default filehandle\n";
+select $default_fh;
+
+# for anything other than a bareword filehandle or filehandle in a scalar variable (not in a list)
+# you must wrap the filehandle in {}
+say "type some lines then do ctrl D";
+open my $output, '>>', 'delete_this_output_file.txt';
+while (<STDIN>) {
+    # the book says you can omit the $_ at the end, but that seems to be incorrect
+    print { substr($_, 0, 1) eq '#' ? $output : *STDOUT } $_;
+}
+close $output;
+
+# exits the script prematurely
+# if there is not \n at the end of string, perl appends the program name and line number
+die "$0: this error is expected. good bye\n";
