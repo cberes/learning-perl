@@ -1,0 +1,124 @@
+#!/usr/bin/env perl
+
+use warnings;
+
+# subroutines return their last expression
+sub stupid_function {
+    5 + 7;
+}
+
+$stupid_result = &stupid_function; # invoke by using name with &
+print "$stupid_result\n";
+
+sub sub_with_arguments {
+    # arguments are stored in @_
+    # this is different from the default variable $_
+    $_[0] + $_[1];
+}
+
+$arguments_result = &sub_with_arguments(5, 7);
+print "$arguments_result\n";
+
+# extra arguments are ignored
+$arguments_result2 = &sub_with_arguments(5, 7, 100);
+print "$arguments_result2\n";
+
+# use my to make private/lexical variables
+sub sub_with_private_args {
+    # you could separate the my call and the assignment into 2 lines; but this way is shorter
+    my($x, $y) = @_;
+    $x + $y;
+}
+
+$twelve_again = &sub_with_private_args(5, 7);
+print "$twelve_again\n";
+
+# apparently it's more perl-esque to accept arbitrary amounts of arguments
+sub sum {
+    my($running_sum) = shift @_;
+    foreach (@_) {
+        $running_sum += $_;
+    }
+    $running_sum;
+}
+
+$sum_result = &sum(5, 7, 100);
+print "$sum_result\n";
+
+# lexical variables can be used in any block
+foreach (1..10) {
+    my($i) = $_;
+    print "$i"; 
+}
+print "\n";
+
+# my can be used with list or scalar context
+sub my_context {
+    my $x = @_; # here we use scalar context, so $x = the number of arguments
+    $x;
+}
+
+$arg_count = &my_context(1, 2, 3, 'red', 'blue');
+print "$arg_count\n";
+
+sub my_makes_lists_too {
+    my @things;
+    push @things, 100;
+    push @things, 200;
+    @things;
+}
+
+@my_list = &my_makes_lists_too;
+print "@my_list\n";
+
+# apparently you can use my anywhere
+foreach my $i (@my_list) {
+    $i .= '!';
+    print "$i\n";
+}
+
+# strict mode requires all new variables are declared
+# this is on by default when using 5.012 or higher
+use strict;
+
+sub this_sub_returns {
+    if ($_[0] >= 100) {
+        return 1; # return does what you think
+    }
+    0;
+}
+
+my $return_result = &this_sub_returns(101);
+print "$return_result\n";
+
+# you can omit the & if
+#   the subroutine is defined before it's invoked
+#   or you wrap the parameter list in parentheses
+# AS LONG AS there's no built-in function with the same name
+
+# you can return lists
+# and you can use wantarray to check if you should return a list
+sub scalar_or_list {
+    if (wantarray) {
+        (1, 2, 3);
+    } else {
+        my $arg_count = @_;
+        $arg_count;
+    }
+}
+
+my $scalar_result = &scalar_or_list(1, 2, 3);
+my @list_result = &scalar_or_list;
+print "scalar: $scalar_result\tlist: @list_result\n";
+
+use 5.010;
+
+# state makes a lexical variable that retains its value between function calls
+# it was added in 5.10
+sub sub_with_state {
+    state $n = 0;
+    $n += 1;
+    "function call $n";
+}
+
+print &sub_with_state . "\n" . &sub_with_state . "\n" . &sub_with_state . "\n";

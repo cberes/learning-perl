@@ -12,3 +12,12 @@ It looks like the most interesting non-experimental new features are
 - [subroutine signatures](https://perldoc.perl.org/5.38.0/perlsub#Signatures)
 - [switch](https://perldoc.perl.org/perlsyn#Switch-Statements) and [smart match](https://perldoc.perl.org/perlop#Smartmatch-Operator) are deprecated
 - [class](https://perldoc.perl.org/5.38.0/perlclass)
+
+## Things not in the book
+
+I'm keeping a list of things not in this book that I want to learn about
+
+- lists of lists
+- packages
+- references
+- modules and libraries
