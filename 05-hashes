@@ -1,0 +1,76 @@
+#!/usr/bin/env perl
+
+use 5.012;
+
+# hashes are associative arrays
+# keys are always strings (if not, they're converted to string)
+my %dog_color;
+$dog_color{'Winnie'} = 'orange';
+$dog_color{'Wednesday'} = 'black';
+
+# used in a list context, you get a list of keys and values
+foreach my $entry (%dog_color) {
+    say $entry;
+}
+
+# can create hashes with values like this
+my %dog_breed = ('Winnie', 'Promeration', 'Wednesday', 'Pit bull');
+
+# this is called unwinding the list
+my @dog_breed_arr = %dog_breed;
+say "@dog_breed_arr";
+
+# this gives you a hash where the values are now keys and keys are now values
+my %dog_breed_reversed = reverse %dog_breed;
+my @dog_breed_rev_arr = %dog_breed_reversed;
+say "@dog_breed_rev_arr";
+
+# another way to create a hash; => is just like a comma
+# this also lets you omit key quotes
+my %skateboard_width = (
+    Antihero         => 8.5,
+    'Sci-Fi Fantasy' => 8.25,
+    WKND             => 8.0, # trailing commas are OK
+);
+my @skateboard_width_arr = %skateboard_width;
+say "@skateboard_width_arr";
+
+# you can omi quotes for simple key names,
+say "WKND deck is $skateboard_width{WKND}\" wide";
+
+my @sk8_keys = keys %skateboard_width;
+say "@sk8_keys";
+
+# apparently the values will be in the same order as the keys
+my @sk8_values = values %skateboard_width;
+say "@sk8_values";
+
+my $sk8_count = keys %skateboard_width;
+say "size is $sk8_count";
+
+# we can use this scalar converstion to check for empty hashes
+if (%skateboard_width) {
+    say "the hash is not empty";
+}
+
+# each returns each pair as a 2-element list
+while (my ($dog, $color) = each %dog_color) {
+    print "$dog is $color\n";
+}
+
+foreach my $dog (sort keys %dog_color) {
+    print "$dog is $dog_color{$dog}\n"
+}
+
+if (exists $skateboard_width{Antihero}) {
+    say "have an Antihero deck";
+}
+
+delete %skateboard_width{Antihero};
+
+# exists returns false this time
+if (exists $skateboard_width{Antihero}) {
+    say "still have an Antihero deck";
+}
+
+print "%ENV is a hash with environment variables. PATH is: $ENV{PATH}\n";
