@@ -1,0 +1,65 @@
+#!/usr/bin/env perl
+
+use 5.014;
+
+# s/// is substitution
+$_ = 'apple';
+s/(.)\1/$1$1$1$1/;
+say;
+
+foreach (qw/ apple banana /) {
+    # apparently you can't use it with $_ in a loop, because it would change $_'s value
+    # if (s/(.)\1/$1$1$1$1/) {
+    my $copy = $_;
+    if ($copy =~ s/(.)\1/$1$1$1$1/) {
+        say $copy;
+    }
+}
+
+# s can use other delimiters, as with qw and m
+# however, paired characters work a little oddly, as below
+$_ = 'banana';
+s<(.)(.)\1>[$2$1$2];
+say;
+
+# modifiers
+#   g   keep going after the first substitution
+#   r   return a new string, leaving the original unchanged
+#   and the rest from last chapter
+
+# remember \U and \L? you can use them with substitutions
+my $dogs = 'Winnie and Wednesday';
+$dogs =~ s/(\w+) and (\w+)/\U$1\E and \L$2\E/;
+say $dogs;
+
+$dogs =~ s/(\w+) and (\w+)/\l$1 and \u$2/;
+say $dogs;
+
+my @words = split / /, $dogs;
+foreach (@words) { say }
+
+foreach (('word1 word2', 'word3     word4')) {
+    # default for split is to split $_ by whitespace
+    my @words = split;
+    foreach (@words) { say }
+}
+
+my $joined = join ', ', ('Mabel', 'Wumbly', 'Buns');
+say $joined;
+
+# matches can return a list
+my ($m, $w, $b) = 'Mabel   Wumbly  Buns' =~ /(\w+)\s+(\w+)\s+(\w+)/;
+say "$m, $w, and $b";
+
+# g modifier keeps matching
+my @dogs = "Pigeon   Winnie\t\tWednesday" =~ /[a-z]+/ig;
+say "@dogs";
+
+# you can assign to hashes, too
+my %dog_breed = 'Winnie Pomeranian Wednesday Pitbull' =~ /(\w+)\s+(\w+)/g;
+say "Winnie is a $dog_breed{Winnie}";
+
+# perl has non-greedy quantifiers
+my ($greedy) = 'george #washington# #carver#' =~ /#(.*)#/;
+my ($non_greedy) = 'george #washington# #carver#' =~ /#(.*?)#/;
+say "Greedy match: $greedy\nNon-greedy match: $non_greedy";

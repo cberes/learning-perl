@@ -1,0 +1,24 @@
+#!/usr/bin/env perl
+
+use 5.014;
+
+# this tells perl to make a copy of the input file with the given extension, then start writing to a new file
+$^I = '.bak';
+
+# this should remove all quotes from each line in the input files, then print them
+while (<>) {
+    s/'|"//g;
+    print;
+}
+
+# you can do something very similar from the command line
+# this is a bad example because the quotes are crazy
+# perl -p -i.bak -w -e 's/'"'"'|"//g' *.json
+#
+# -p says to write a program. it starts out like this
+#    while (<>) {
+#       print;
+#    }
+# -i sets $^I
+# -w enables warnings
+# -e adds this line to the loop; you can have multiple of these, and semicolons are required for all but the last one
