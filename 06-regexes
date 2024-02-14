@@ -1,0 +1,30 @@
+#!/usr/bin/env perl
+
+use 5.012;
+
+foreach (qw{ foot hand }) {
+    if (/oo/) {
+        say;
+    }
+}
+
+foreach (('Welcome to perl', 'unwelcome', 'perl5.12')) {
+    if (/\p{Space}/) {
+        say "Has a space: $_";
+    }
+    if (/\p{Digit}/) {
+        say "Has a digit: $_";
+    }
+}
+
+foreach ((1, 2, 3.25, 4)) {
+    if (/\P{Digit}/) {
+        say "Has a non-digit: $_";
+    }
+}
+
+foreach (qw| apple banana |) {
+    if (/(.)\1/) { # \1 is a backreference; can also use \g{1}
+        say "matching fruit: $_";
+    }
+}
