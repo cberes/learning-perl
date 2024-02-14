@@ -1,6 +1,6 @@
 # learning-perl
 
-I am taking notes while learning Perl by reading [_Learning Perl 6th Edition_](https://www.learning-perl.com/) by Randal L. Schwartz, drian d foy, and Tom Phoenix.
+I am taking notes while learning Perl by reading [_Learning Perl 6th Edition_](https://www.learning-perl.com/) by Randal L. Schwartz, brian d foy, and Tom Phoenix.
 
 ## Perl version
 
