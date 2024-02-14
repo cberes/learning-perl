@@ -1,0 +1,72 @@
+#!/usr/bin/env perl
+
+use 5.014;
+
+# /regex/ from last chapter is short for m/regex/
+# like qw, other delimiters can be used, but when using //, m can be omitted
+foreach (qw{ apple banana }) {
+    if (m<(.)\1>) {
+        say;
+    }
+}
+
+# modifiers go after the closing delimiter
+#   i   case-insensitive
+#   s   . can match new-lines
+#   m   ^ and $ match start and end of each line
+#   x   allows adding arbitrary whitespace to the regex
+#   a   include only ASCII ranges in \w, \d, and \s
+#   u   include unicode characters in \w, \d, and \s
+#   l   respect locale settings in \w, \d, and \s
+#   aa  ASCII-only case-folding, whatever that means
+
+# anchors
+#   \A  start of string
+#   \z  end of string
+#   \Z  end of string, but a new line is allowed after
+#   ^   start of line (with m modifier)
+#   $   end of line (with m modifier)
+#   \b  beginning or end of word (word is according to \w)
+#   \B  not a word boundary
+
+# binding operator: how you do matches against stuff that's not $_
+# it's not an assignment
+my $president = 'George Washington';
+if ($president =~ /ton\z/) {
+    say 'found a match';
+}
+
+# you can interpolate into regexes like strings
+# but nothing is escaped
+if ($president =~ /\A$president\z/) {
+    say 'found a match using interpolation';
+}
+
+# capture variables
+# they persist until the next successful match
+if ($president =~ /\b(\w+)\Z/) {
+    say "last name: $1";
+}
+
+# named captures
+# they're added to the %+ hash
+# also you can use the labels for backreferences, e.g. here you could use \g{last}
+if ($president =~ /\b(?<last>\w+)\Z/) {
+    say "last name (with named capture): $+{last}";
+}
+
+# automatic match variables
+# apparently these suck, so see the next example
+if ("$president Carver" =~ /\s(\w+)\s/) {
+    say "before the match: $`";
+    say "the whole match: $&";
+    say "after the match: $'";
+}
+
+# p modifier enables better match variables
+# as of 5.20, these are available with or without the modifier
+if ("Pikapee Pikachu Pikapoo" =~ /\s(\w+)\s/p) {
+    say "before the match: ${^PREMATCH}";
+    say "the whole match: ${^MATCH}";
+    say "after the match: ${^POSTMATCH}";
+}
