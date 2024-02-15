@@ -1,0 +1,84 @@
+#!/usr/bin/env perl
+
+use 5.014;
+
+my @dt = localtime;
+my $seconds = $dt[0];
+my $day_of_week = $dt[6];
+
+# unless: like "if not"
+# it can have an else clause, but that seems dumb
+unless ($day_of_week == 4) {
+    say 'today is not Thursday';
+}
+
+# until: like "while not"
+my $i = 0;
+until ($i > $seconds) {
+    say 'second ' . $i++;
+}
+
+# expression modifiers
+# work the same as the usual way of writing them, but they go after an expression
+say "seconds is odd" if ($seconds % 2 == 1);
+say "seconds is even" unless ($seconds % 2 == 1);
+say "incrementing \$i: $i" until ($i++ == 60);
+say "decrementing \$i: $i" while ($i-- > 50);
+print "$_ " foreach @dt;
+print "\n";
+
+# can do this trick: it runs once, and the scope is limited
+{
+  my $something = 6;
+  print "\$something is $something\n";
+}
+# the next line would causes an error, because $something's no longer in scope
+# print "\$something is $something\n";
+
+# elsif: perl's "else if"
+if ($seconds % 3 == 0) {
+    say '$seconds is divisible by 3';
+} elsif ($seconds % 5 == 0) {
+    say '$seconds is divisible by 5';
+}
+
+# for loops
+for ($i = 0; $i <= 60; $i += 10) {
+    if ($seconds < $i) {
+        say "seconds is less than $i";
+    }
+}
+
+# for and foreach keywords are interchangeable
+
+# last, next, and redo
+# last is like break (in a loop)
+# next is like continue
+# redo restarts the current iteration
+# can use them all with labels like in other language (labels are barewords)
+
+# ternary operator
+$seconds % 2 == 0 ? print "seconds is even\n" : print "seconds is odd\n";
+
+# &&
+if ($day_of_week == 0 && $day_of_week == 6) {
+    say 'well, this will never happen';
+}
+
+# ||
+if ($day_of_week == 0 || $day_of_week == 6) {
+    say 'it\'s the weekend!';
+}
+
+# defined-or
+say (0 // 'defined-or will short-circuit for a false value');
+say (undef // 'defined-or will continue evaluating if it gets undef');
+
+# &&, ||, //, and ?: can be used after expressions to conditionally do something else
+$seconds < 30 && say 'the minute has just begun';
+$seconds < 30 || say 'the minute is almost over';
+
+# and, or: like && and ||, but they have very low precedence
+# this allows using fewer parentheses
+$seconds < 30 and say 'the minute has just begun';
+$seconds < 30 or say 'the minute is almost over';
