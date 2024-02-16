@@ -1,0 +1,38 @@
+#!/usr/bin/env perl
+
+use 5.014;
+
+# local::lib is a module that lets you install modules in non-standard directories
+# if you use it, you'd need to add this:
+# use local::lib;
+
+# or you can tell perl where to look for modules:
+# use lib qw ( /path/to/modules );
+
+use File::Basename;
+
+my $perl_path = "/usr/local/bin/perl";
+say basename $perl_path;
+
+# you can limit the functions that are imported
+# use File::Basename qw( basename );
+
+# import no functions:
+# use File::Basename ();
+#
+# you can still access all functions, but must use their full names
+say File::Basename::basename $perl_path;
+
+use File::Spec;
+
+say File::Spec->catfile('/usr/bin', basename $perl_path);
+
+# Path::Class is an alternative to File::Spec, but it doesn't come with perl
+
+# CGI.pm is great if you're making websites in 2004.
+
+# DBI is a popular module for database access
+
+# DateTime does date and time stuff
+# also Time::Piece, which is simpler
+# but this book was written back in 2011, so who knows
