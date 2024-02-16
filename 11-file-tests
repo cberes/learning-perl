@@ -1,0 +1,63 @@
+#!/usr/bin/env perl
+
+use 5.014;
+
+my $file = '11-file-tests';
+my $file1 = $file . '1';
+
+# -e: file exists
+die "file $file1 exists" if -e $file1;
+
+open my $intro, '<', '00-intro';
+
+# -M: modfication time in days ago
+say 'I read the first chapter less than a week ago' if -M $intro < 7;
+
+close $intro;
+
+# -s: file size in bytes
+say 'list chapter notes are over 3000 bytes!' if -s '02-lists' > 3000;
+
+# you can use these without an if
+say -s '02-lists';
+
+# there are a lot of file test operators
+# I can look them up if I need them
+
+if (-r $file and -w $file) {
+    say "$file is readable and writeable";
+}
+
+# you can use _ after the first file test for MORE SPEED!
+# you can do this in separate conditions, too; _ is set by the last file test
+# but be careful because a subroutine could change _'s value
+if (-r $file and -w _) {
+    say "$file is readable and writeable";
+}
+
+# this is the same as above
+# only do this for operators that return booleans
+if (-r -w $file) {
+    say "$file is readable and writeable";
+}
+
+# stat: returns a bunch of info about a file
+# there's also lstat, which handles symbolic links differently
+my @stats = stat $file;
+say "stat $file: @stats";
+
+# gmtime: like localtime but for utc
+my @time = gmtime;
+say "gmtime: @time";
+
+# bitwise operators
+say '10 & 12 = ' . 10 & 12;
+say '10 | 12 = ' . 10 | 12;
+say '10 ^ 12 = ' . 10 ^ 12;
+say '6 << 2 = ' . 6 << 2;
+say '25 >> 2 = ' . 25 >> 1;
+say '~10 = ' . ~10;
+
+# you can use bitstrings, too
+# these seem like a way to limit how many bits are involved?
+say '\xAA | \x55 = ' . ord("\xAA" | "\x55");
