@@ -1,0 +1,45 @@
+#!/usr/bin/env perl
+
+use 5.014;
+use File::Spec::Functions ();
+
+# chdir: change directory
+chdir '..' or die "oh no: $!";
+
+# globbing: apparently this means expanding a wildcard into its matching files
+# the shell does this for you when invoking a program with wildcard arguments
+# but you can do it within a program by using glob
+my @all_files = glob '*';
+say "@all_files";
+
+# this is the same as above
+# < > also reads from files, but only if the argument is a filehandle
+my @all_files2 = <*>;
+say "@all_files2";
+
+# directory handles
+my $dir_name = '.';
+opendir my $dh, $dir_name or die 'can\'t open the current directory, that\'s not good';
+
+foreach my $file (readdir $dh) {
+    say File::Spec::Functions::catfile($dir_name, $file)
+      unless $file eq '.' || $file eq '..';
+}
+
+# if you don't close the directory handle, perl will close it like a filehandle
+closedir $dh;
+
+say "this is process $$";
+say "unix epoch is " . time; # time in seconds since 1970
+
+# File::Find    # like shell's find command
+
+# unlink        # deletes files, like rm
+# rename        # moves files, like mv
+# link          # creates a link to a file, like ln
+# symlink       # creates a symbolic link to a file, like ln -s
+# readlink      # gets where a symlink points
+# mkdir         # creates a directory
+# rmdir         # deletes an empty directory
+# chmod         # change file permissions
+# chown         # changes file owner
