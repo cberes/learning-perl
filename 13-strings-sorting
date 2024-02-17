@@ -1,0 +1,79 @@
+#!/usr/bin/env perl
+
+use 5.014;
+
+my $needle = 'foo';
+my $haystack = 'American football';
+my $index = index($haystack, $needle);
+say "found $needle at index $index in $haystack";
+
+say "substring not found" if index($haystack, 'goo') == -1;
+
+my $index2 = index($haystack, 'a', index($haystack, 'a') + 1);
+say "found 2nd a at index $index2 in $haystack";
+
+say 'rindex finds last index' if rindex($haystack, 'a') == $index2;
+
+say substr $haystack, index($haystack, ' ') + 1;
+say substr $haystack, index($haystack, ' ') + 1, 4; # last index is length
+say substr $haystack, -4; # start index can be negative to start from the end of the string
+
+# you can assign to a substring
+# or pass a 4th argument to substr, which is a replacement string
+substr($haystack, 0, index($haystack, ' ')) = 'Good Canadian';
+say $haystack;
+
+# can use substr with =~ to restrict search space
+substr($haystack, 0, rindex($haystack, ' ')) =~ s/oo/ooooo/g;
+say $haystack;
+
+# sprintf
+say sprintf '%4d/%02d/%02d %2d:%02d:%02d', 2024, 1, 1, 12, 0, 0;
+
+# comparison functions for sorting
+# perl gives them $a and $b arguments
+
+my @things = qw ( 20 10 1 2 100 );
+my @sorted = sort @things;
+say "@sorted";
+
+sub by_number { $a - $b }
+
+# note no & and no comma after comparison function
+my @sorted_better = sort by_number @things;
+say "@sorted_better";
+
+# can use spaceship operator for numeric comparison
+sub by_number2 { $a <=> $b }
+
+my @s1 = sort by_number2 @things;
+say "@s1";
+
+# cmp is the string equivalent to <=>
+sub by_default_sort { $a cmp $b }
+
+# this yields the default sort order
+my @s2 = sort by_default_sort @things;
+say "@s2";
+
+# you can inline the sort function
+my @s3 = sort { $a <=> $b } @things;
+say "@s3";
+
+# reverse is treated as a modifier for sort
+# I want to know more about that
+my @s4 = reverse sort { $a <=> $b } @things;
+say "@s4";
+
+# or swap a and b
+my @s5 = sort { $b <=> $a } @things;
+say "@s5";
+
+# sorting hash entries by value
+my %score = ('Winnie' => 99, 'Wednesday' => 100, 'Pigeon' => 50);
+my @sorted_scores = sort { $score{$b} <=> $score{$a} } keys %score;
+say "@sorted_scores";
+
+# because 0 is false, you can do fallback sorts like this
+# this would sort by score value descending, then key ascending
+sub by_score_then_key { $score{$b} <=> $score{$a} or $a cmp $b }
