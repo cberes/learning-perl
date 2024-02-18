@@ -1,0 +1,108 @@
+#!/usr/bin/env perl
+
+use 5.034;
+
+my (undef, undef, $hour) = localtime;
+say "the hour is $hour";
+
+# list slice
+my $year = (localtime)[5] + 1900;
+say "the year is $year";
+
+# you need the parentheses; the following 2 lines won't work
+# my $year = localtime[5];
+# my $year = localtime()[5];
+
+# can get multiple elements
+# and indices can be negative to start from the end of the list
+my ($mday, $wday, $yday) = (localtime)[3, 6, -2];
+say "day of month: $mday\tday of week: $wday\tday of year: $yday";
+
+# you don't need parentheses when slicing from an array
+# this is an array slice
+# note that the sigil is @ when doing a slice
+my @names = qw( zéro un deux trois quatre cinq six sept huit neuf );
+my @numbers = @names[6, 9];
+say "@numbers";
+say "@names[4, 2, 0]";
+
+# you can assign using an array slice
+@names[3, 5, 7] = qw(three five seven);
+say "@names";
+
+# hash slice
+# note that the sigil is @, like when doing an array slice
+my %number_name = ( zero => 0, one => 1, two => 2, three => 3, four => 4, five => 5 );
+my @one35 = @number_name{ qw( one three five ) };
+say "@one35";
+say "@number_name{('two', 'four')}";
+
+# you can assign to hash slices as with array slices
+@number_name{ qw( six seven ) } = ( 6, 7 );
+my @number_name_arr = %number_name;
+say "@number_name_arr";
+
+# eval: catches errors
+# if there was an error, it returns undef in scalar context or () in list context
+# otherwise it returns the last evaluated expression
+say '6 / 7 = ' . eval { 6 / 7 };
+say '6 / 0 = ' . eval { 6 / 0 };
+# $@ returns the error message if any; and you can check the return value
+print "the error was: $@";
+
+# eval can use a string, but only plebs use it
+eval "say 'in eval: 6/7=' . 6/7";
+
+# try/catch/finally
+# you used to need a module, like Try::Tiny
+# but now you need only to enable it
+use feature 'try';
+
+try {
+    say 'in try catch: 6/0=' . 6/0;
+} catch ($e) {
+    print "oops can't divide by zero: $e";
+}
+
+# 5.36 adds a finally block
+#finally {
+#    say 'the finally block always runs';
+#}
+
+# autodie
+# automatically adds die clauses after some built-in functions
+# you can limit the functions like this: use autodie qw( open system );
+use autodie;
+
+# grep
+# like filtering a list
+my @odd_numbers = grep { $_ % 2 } 1..100;
+say "@odd_numbers";
+
+# if you need only an expression, you can omit the {} and add a ,
+my @names_with_s = grep /\As/, @names;
+say "@names_with_s";
+
+my $match_count = grep /\As/, @names;
+say "found $match_count matches";
+
+# map
+# transforms list elements
+my @upper_names = map { "\U$_" } @names;
+say "@upper_names";
+
+# if you need only an expression, you can omit the {} and add a ,
+my @upper_names2 = map "\U$_", @names;
+say "@upper_names2";
+
+# the block's return value is evaluated in a list context, so it can return multiple values
+my @upper_and_lower_names = map { ("\U$_", "\L$_") } @names;
+say "@upper_and_lower_names";
+
+# List::Util module comes with nice list processing utilities
+use List::Util qw( first );
+my $first_s_name = first { /\As/ } @names;
+say "first s number is $first_s_name";
+
+# List::MoreUtils module has even more list processing utilities
+# but it doesn't come with perl
