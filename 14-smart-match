@@ -1,0 +1,60 @@
+#!/usr/bin/env perl
+
+use 5.014;
+
+# smart match: ~~
+# always two arguments, and the operation depends on the arguments
+#
+# smart match is deprecated, so there's probably little point in learning what it does
+my %dog_breed = (Winnie => 'Pomeranian', Wednesday => 'Pit bull');
+say '%dog_breed key matches regex /Win/' if /Win/ ~~ %dog_breed;
+
+# given-when uses smart match
+say '* using given-when:';
+given ('Winnie') {
+    when ('Win')        { say "wins" }
+    when (/Win/i)       { say "She's the kind that doesn't lose" }
+    when (%dog_breed)   { say "Know dog breed for $_" }
+    default             { say "Know nothing" }
+}
+
+# above is equivalent to this
+say '* using given-when with explicit ~~';
+given ('Winnie') {
+    when ($_ ~~ 'Win')      { say "wins" }
+    when ($_ ~~ /Win/i)     { say "She's the kind that doesn't lose" }
+    when ($_ ~~ %dog_breed) { say "Know dog breed for $_" }
+    default                 { say "Know nothing" }
+}
+
+# if you add continue, you can keep matching other whens
+# but if you add continue before default, you'll always hit the default case
+say '* using given-when with continue:';
+given ('Winnie') {
+    when ('Win')        { say "wins"; continue }
+    when (/Win/i)       { say "She's the kind that doesn't lose"; continue }
+    when (%dog_breed)   { say "Know dog breed for $_" }
+    default             { say "Know nothing" }
+}
+
+say '* using given-when without ~~:';
+given ('Winnie') {
+    say 'you can include non-when stuff in given';
+    when ($_ eq 'Win')              { say "wins"; continue }
+    when ($_ =~ /Win/i)             { say "She's the kind that doesn't lose"; continue }
+    when (exists $dog_breed{$_})    { say "Know dog breed for $_" }
+    default                         { say "Know nothing" }
+}
+
+# if you pass a value without an operator, you'll use ~~
+# unless you call a subroutine, use !, or do several other things
+
+# you can use when with foreach loops, which apparently is better
+say '* using foreach with whens:';
+for ('Winnie') {
+    say 'you can include non-when stuff in foreach';
+    when ($_ eq 'Win')              { say "wins"; continue }
+    when ($_ =~ /Win/i)             { say "She's the kind that doesn't lose"; continue }
+    when (exists $dog_breed{$_})    { say "Know dog breed for $_" }
+    default                         { say "Know nothing" }
+}
