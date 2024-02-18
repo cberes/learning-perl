@@ -1,0 +1,102 @@
+#!/usr/bin/env perl
+
+use 5.014;
+
+# system runs a new process
+# stdin and stdout are set to whatever they are for the parent process
+system 'date';
+
+# you can use environment vars
+system 'ls -l $HOME/bin';
+
+# you can use & to run background processes like in the shell
+
+# you can anything you can do in the shell
+# this outputs a lot of stuff, but you can do it
+# system 'for i in *; do echo == $i ==; cat $i; done';
+
+# you can pass multiple arguments to system
+# in that case, the first is the program to run, and the rest are arguments
+# and you don't use the shell
+system 'date', '--iso-8601=minutes', '-u';
+
+# system returns the program's return value
+# 0 usually means success, so you can negate it
+!system 'date' or die 'problem getting the date';
+
+# environment variables
+# new processes inherit what you have in %ENV, so you can change it before you launch a process
+
+# exec is like system, but it takes over the current process
+# and doesn't return to your program
+# exec 'date';
+
+# you can use `` to assign the output to a variable
+chomp(my $now = `date`);
+say "It is now $now";
+
+# you can do stirng interpolation in backticks
+my $fmt = 'minutes';
+chomp(my $now = `date --iso-8601=$fmt`);
+say "It is still $now";
+
+# instead of backticks, you can use qx
+# qx is like qw: you can use whatever delimiter
+# if you use ' as the delimiter, there's no interpolation
+chomp(my $echo_dollar_dollar =  qx'echo $$');
+say "This is process $echo_dollar_dollar";
+
+# you can use qx or `` in list context to get a list of lines
+chomp(my @ls_lines = qx'ls -l $HOME/bin');
+say "$ls_lines[0]";
+
+# IPC::System::Simple provides an alternate version of system
+
+# you can launch a process and keep it alive using filehandles
+# use the program name as the file name with either a leading or trailing |
+#
+# using | on the right attaches its output to your input
+# using | on the left attaches its input to your output
+open my $date, 'date|' or die "cannot pipe from date: $!";
+while (<$date>) { print }
+close $date;
+die "date: non-zero exit of $?" if $?;
+
+# can also be written like this
+# open my $date, '-|', 'date'
+# additional arguments to open will be passed to the process
+
+# fork starts a new process
+defined(my $pid = fork) or die "Cannot fork: $!";
+# now you have 2 processes here
+# only the parent has a non-zero value for $pid
+unless ($pid) {
+    # the child process enters this branch
+    exec 'date';
+    die "cannot exec date: $!";
+}
+# the parent process skips the branch, going down here
+# this waits for the child process to finish
+waitpid($pid, 0);
+
+# kill: sends signals
+# kill 2, $target_process_id or die "failed to send signal: $!";
+
+# can send signal by name (this is the same as above)
+# kill 'INT', $target_process_id or die "failed to send signal: $!";
+
+# or use => (again, same as abovr)
+# kill INT => $target_process_id or die "failed to send signal: $!";
+
+# you can use signal 0 to check if a process is alove
+warn "no process for that id" unless kill 0, 4201;
+
+# signal handlers
+sub my_int_handler {
+    say 'doing some cleanup';
+    die 'interrupted; exiting.';
+}
+
+# assign to %SIG to set the handler
+# apparently you should use a subroutine reference instead of the subroutine's name
+$SIG{INT} = 'my_int_handler';
