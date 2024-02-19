@@ -1,0 +1,83 @@
+#!/usr/bin/env perl
+
+use 5.034;
+
+my $str = 'zero one two three four five six seven eight nine';
+my @arr = qw( zero one two three four five six seven eight nine );
+my %hash = (zero => 0, one => 1, two => 2, three => 3, four => 4, five => 5, six => 6, seven => 7, eight => 8, nine => 9);
+sub my_sub {
+    my (@num_arr) = @_;
+    join ', ', map { $arr[$_] } @num_arr;
+}
+
+# use \ to create references
+my $str_ref = \$str;
+my $arr_ref = \@arr;
+my $hash_ref = \%hash;
+my $sub_ref = \&my_sub;
+
+# you can create a reference to an anonymous array with []
+# using \($a, $b) is different; it returns a list of references like (\$a, \$b)
+my $array_ref_example = [1, 2, ['a', 'b', 'c']];
+
+# you can create a reference to an anonymous hash with {}
+my $hash_ref_example = { Adam  => 'Eve', Clyde => 'Bonnie' };
+
+# but this can be confused with a block
+# to clarify that you want a reference, use +{ ... }
+# to clarify that you want a block, use {; ... }
+
+# you can create a reference to an anonymous subroutine without a name
+# note the semicolon
+my $code_ref_example = sub { print "Boink!\n" };
+
+# to use a reference, replace the name with the scalar variable containing a reference
+say "str: $$str_ref";
+say "arr: @$arr_ref";
+my @hash_arr = %$hash_ref;
+say "hash: @hash_arr";
+my $sub_result = &$sub_ref(map { rand 10 } 1..4);
+say "sub result: $sub_result";
+
+# you can use blocks as well?
+# these are "silly" examples, but the block can contain an arbitrary expression
+say "str: ${$str_ref}";
+say "arr: @{$arr_ref}";
+my @hash_arr = %{$hash_ref};
+say "hash: @hash_arr";
+my $sub_result = &{$sub_ref}(map { rand 10 } 1..4);
+say "sub result: $sub_result";
+
+# arrow notation
+say "arr[4]: $arr_ref->[4]";
+say "hash[four]: $hash_ref->{four}";
+say "sub result: " . $sub_ref->(map { rand 10 } 1..4);
+
+# the arrow is optional between brackets subscripts
+say "multi-dimensional lists? $array_ref_example->[2]->[0]";
+say "multi-dimensional lists? $array_ref_example->[2][1]";
+
+# use a reference as a number to get its location in memory
+say 'str_ref and arr_ref point to different locations' unless $str_ref == $arr_ref;
+
+# you can pass arguments by value like I've been doing
+sub pass_by_value {
+    my (@arg_arr) = @_;
+    say "pass_by_value argument: @arg_arr";
+    @arg_arr = qw( uno dos );
+}
+
+# or pass them by reference
+sub pass_by_ref {
+    my ($arg_ref) = @_;
+    say "pass_by_ref argument: @$arg_ref";
+    @$arg_ref = qw( uno dos );
+}
+
+my @sub_arr = qw( one two );
+
+&pass_by_value(@sub_arr);
+say "after pass_by_value: @sub_arr";
+
+&pass_by_ref(\@sub_arr);
+say "after pass_by_ref: @sub_arr";
