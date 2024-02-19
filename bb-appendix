@@ -1,0 +1,83 @@
+#!/usr/bin/env perl
+#
+# Including this opening comment to test the .. operator
+#
+
+use 5.034;
+
+# scalar , operator
+my $a = 5, my $b = 6;
+say "$a, $b";
+
+# scalar .. operator
+# According to https://perldoc.perl.org/perlop#Range-Operators
+# The operator is bistable, like a flip-flop,
+# and emulates the line-range (comma) operator of sed, awk, and various editors.
+# Each ".." operator maintains its own boolean state,
+# even across calls to a subroutine that contains it.
+# It is false as long as its left operand is false.
+# Once the left operand is true, the range operator stays true
+# until the right operand is true, AFTER which the range operator
+# becomes false again. It doesn't become false till the next time
+# the range operator is evaluated.
+#
+# It can test the right operand and become false on the same evaluation it became true
+# (as in awk), but it still returns true once. If you don't want it to test
+# the right operand until the next evaluation, as in sed, just use three dots ("...")
+# instead of two. In all other regards, "..." behaves just like ".." does.
+#
+# If either operand of scalar ".." is a constant expression,
+# that operand is considered true if it is equal (==) to the current input line number
+# (the $. variable).
+open my $this_file, '<', 'bb-appendix';
+while (<$this_file>) {
+    if (14 .. 22) {
+        print;
+    }
+}
+close $this_file;
+
+open my $this_file2, '<', 'bb-appendix';
+while (<$this_file2>) {
+    my $in_header = 1 .. /^[^#]/;
+    my $after_header = /^[^#]/ .. 12;
+    my $ignore_the_rest = 13 .. eof;
+
+    next if $in_header;
+    last if $ignore_the_rest;
+    print if $after_header;
+}
+close $this_file2;
+
+# here documents
+my $here1 = <<"END";
+$a
+    $b
+        foo
+END
+
+# no interpolation if using '
+my $here2 = <<'FOO';
+$a
+    $b
+        foo
+FOO
+
+print $here1;
+print $here2;
+
+# transliteration
+my $cat_mat = 'the cat sat on the mat.';
+$cat_mat =~ tr/the/xyz/;
+say $cat_mat;
+
+# Math::BigInt, Math::BigFloat
+# these are probably like BigInteger or BigDecimal
+
+# perldebug: debugging
+
+# B::Lint
+
+# Closures
+
+# Threads
